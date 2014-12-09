@@ -1,0 +1,205 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+        <h:head>
+        <title>OpenTownHall</title>
+        <link href="resources/bootstrap/css/bootstrap.min.css" rel="stylesheet"></link>
+        <link href="resources/css/comment.css" rel="stylesheet"></link>
+        <link href="resources/lightbox/css/lightbox.css" rel="stylesheet"></link>
+        <script src="resources/bootstrap/js/jquery-1.11.1.min.js"></script>
+        <script src="resources/bootstrap/js/bootstrap.min.js"></script>
+        <script src="resources/lightbox/js/lightbox.min.js"></script>
+        <script src="resources/js/holder.js"></script>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDj0mWyG4yEHi06F4FxG8pKdPUkkvtpHwc"></script>
+        <script type="text/javascript">
+            function initialize() {
+                var coordinates = #{reportView.coord};
+                console.log(coordinates["lat"]);
+                console.log(coordinates["lng"]);
+                var myLatlng = new google.maps.LatLng(coordinates["lat"], coordinates["lng"]);
+                var mapOptions = {
+                    center: myLatlng,
+                            zoom: 17
+                };
+                console.log("hey");
+                var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+                console.log("hey");
+                
+                var marker = new google.maps.Marker({
+                    position: myLatlng,
+                    title:"Hello World!"
+                });
+                
+                marker.setMap(map);
+            }
+            google.maps.event.addDomListener(window, 'load', initialize);
+        </script>
+    </h:head>
+    <h:body>
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#{reportsView.goHome()}">
+                        <img alt="Brand" src="resources/images/town-hall.png" style="float: left; max-height: 100%;max-width: 100%"></img>
+                        <strong style="color: #33485d">OpenTownHall</strong>
+                    </a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <h:form>
+                        <ul class="nav navbar-nav">  
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="#{reportView.goNewReport()}" value="&nbsp;New Report" rendered="#{loginView.user.role eq 'user'}">
+                                    <span class="glyphicon glyphicon-plus" style="float: left"></span>
+                                </h:commandLink>        
+                            </li>
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="#{reportsView.goHome()}" value="&nbsp;My Reports" rendered="#{loginView.user.role eq 'user'}">
+                                    <span class="glyphicon glyphicon-list-alt" style="float: left"></span>
+                                    <f:param name="uId" value="#{loginView.user.id}"/>
+                                    <f:param name="uName" value="#{loginView.user.name} #{loginView.user.surname}"/>
+                                </h:commandLink>        
+                            </li>
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="watchlist.xhtml" value="&nbsp;Watchlist" rendered="#{loginView.user.role eq 'user'}">
+                                    <span class="glyphicon glyphicon-eye-open" style="float: left"></span>
+                                </h:commandLink>        
+                            </li>
+                        </ul>                   
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="profile.xhtml?faces-redirect=true" value=" Profile" >
+                                    <span class="glyphicon glyphicon-user"></span>
+                                    <f:param name="uId" value="#{loginView.user.id}"/>
+                                </h:commandLink>        
+                            </li>
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="#{loginView.doLogout()}" value="Logout" />
+                            </li>
+                        </ul>
+                    </h:form>
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </nav>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="bs-callout bs-callout-info">
+                        <h:form>
+                            <h:commandLink class="btn btn-default" action="#{reportView.deleteReport(reportView.currentReport.id)}" style="float: right;" value="Remove" rendered="#{loginView.user.id==reportView.currentReport.user.id}">
+                                <span class="glyphicon glyphicon-ban-circle" style="font-size: 11px; color: red;"></span>
+                            </h:commandLink>
+                            <h:commandLink class="btn btn-default" style="float: right;" value="Edit" action="#{reportView.goEditReport()}" rendered="#{loginView.user.id==reportView.currentReport.user.id}">
+                                <span class="glyphicon glyphicon-pencil" style="font-size: 11px; color: #5bc0de;"></span>
+                            </h:commandLink>
+                        </h:form>
+                        <h:form>
+                            <div class="form-inline" style="float: right">
+                                <h:selectOneMenu value="#{workerView.worker}" rendered="#{loginView.user.role eq 'admin'}" class="form-control">
+                                    <f:selectItem itemValue="#{null}" itemLabel="Select Worker..." />
+                                    <f:selectItems value="#{workerView.workersList}" var="work" itemLabel="#{work.name} #{work.surname}" itemValue="#{work.id}"/>
+                                </h:selectOneMenu>
+                                <h:commandLink class="btn btn-primary" style="float: right; margin-left: 5px" value="Assign Worker" action="#{workerView.goViewReport()}" rendered="#{loginView.user.role eq 'admin'}"/>
+                            </div>
+                            <h:commandLink class="btn btn-danger" style="float: right; margin-left: 5px" value="Close Report" action="#{workerView.closeReport()}" rendered="#{(loginView.user.role eq 'worker') and (reportView.currentReport.status!=1)}"/>
+                        </h:form>    
+                        <h4 style="color: #33485d;"><strong>#{reportView.currentReport.title}</strong></h4>
+                        <h:form>
+                            <p style="font-size: 11px; margin-top: -2px; color: #777 ">posted by    
+                                <h:commandLink action="#{reportsView.goHome()}" value="#{reportView.currentReport.user.name} #{reportView.currentReport.user.surname}" style="font-size: 11px;">
+                                    <f:param name="uId" value="#{reportView.currentReport.user.id}"/>
+                                    <f:param name="uName" value="#{reportView.currentReport.user.name} #{reportView.currentReport.user.surname}"/>
+                                </h:commandLink>                                 
+                                at #{reportView.currentReport.timestamp}
+                            </p>
+                        </h:form>
+                        <h:panelGrid id="grid1" columns="1" rendered="#{reportView.currentReport.status eq -1}">
+                            <p style="font-size: 11px; color: #777; font-style: italic;"><span class="glyphicon glyphicon-remove-sign" style="color: red"></span> not assigned yet!</p>
+                        </h:panelGrid>
+                        <h:panelGrid id="grid2" columns="1" rendered="#{reportView.currentReport.status eq 0}">
+                            <p style="font-size: 11px; color: #777; font-style: italic;"><span class="glyphicon glyphicon-ok-sign"></span> assigned to #{reportView.currentReport.worker.name} #{reportView.currentReport.worker.surname}</p>
+                        </h:panelGrid>
+                        <h:panelGrid id="grid3" columns="1" rendered="#{reportView.currentReport.status eq 1}">
+                            <p style="font-size: 11px; color: #777; font-style: italic;"><span class="glyphicon glyphicon-ok-sign" style="color: green"></span> solved by #{reportView.currentReport.worker.name} #{reportView.currentReport.worker.surname}</p>
+                        </h:panelGrid>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="bs-callout bs-callout-my">
+                        <p>#{reportView.currentReport.description}</p>
+                    </div>
+                    <hr/>
+                    <div>        
+                        <a href="#{reportView.currentReport.pictureCollection.size() eq 0 ? 'resources/images/no-image.jpg': reportView.currentReport.pictureCollection[0].path}" data-lightbox="image-1" class="thumbnail" style="height: 160px; width: 160px; display: block;">
+                            <h:graphicImage value="#{reportView.currentReport.pictureCollection[0].path}" rendered="#{reportView.currentReport.pictureCollection.size() eq 1}" style="min-height: 150px; max-height: 150px"/>
+                            <h:graphicImage value="resources/images/no-image.jpg" rendered="#{reportView.currentReport.pictureCollection[0] eq null}" style="min-height: 150px; max-height: 150px"/>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="panel panel-default" style="padding: 5px;">
+                        <div id="map-canvas" style="width:445px; height:445px"></div>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="detailBox">
+                        <div class="titleBox">
+                            <h4 style="color: #33485d; font-weight: bold;">Comment Box</h4>
+                        </div>
+                        <div class="actionBox">
+                            <ul class="commentList">
+                                <ui:repeat value="#{reportView.currentReport.commentCollection}" var="comment">
+                                    <li>
+                                        <div class="commenterImage">
+                                            <p>
+                                                <span class=" glyphicon glyphicon-user" aria-hidden="true"></span>
+                                                <h:outputText style="font-weight: bold; color: #1abc9c" value="&nbsp;#{comment.userId.name} #{comment.userId.surname}" rendered="#{not (comment.userId.role eq 'user')}"/>
+                                                <h:outputText style="font-weight: bold;" value="&nbsp;#{comment.userId.name} #{comment.userId.surname}" rendered="#{comment.userId.role eq 'user'}"/>
+                                            </p>
+                                        </div>
+                                        <div class="commentText">
+                                            <h:outputText value="#{comment.text}" rendered="#{comment.userId.role eq 'user'}"/>
+                                            <h:outputText style="font-weight: bold;" value="#{comment.text}" rendered="#{not (comment.userId.role eq 'user')}"/>
+                                            <br/>
+                                            <span class="date sub-text">on #{comment.timestamp}</span>
+                                            <h:form>
+                                                <h:commandLink value="Remove" action="#{reportView.deleteComment(comment.id)}" rendered="#{comment.userId.id eq loginView.user.id}"></h:commandLink>
+                                            </h:form>
+                                        </div>
+                                    </li>
+                                    <hr/>
+                                </ui:repeat>
+                            </ul>
+                            <h:form class="form-inline"> 
+                                <div class="form-group" style="width: 80%">
+                                    <h:inputText class="form-control" pt:placeholder="Your comments" value="#{reportView.commentText}" />
+                                </div>
+                                <div class="form-group" style="width: 18%;">
+                                    <h:commandButton class="btn btn-large btn-primary" action="#{reportView.addComment()}" value="Add Comment"/>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                    <hr/>
+                </div>
+            </div>
+        </div>
+    </h:body>
+</html>

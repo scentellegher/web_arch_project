@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE glassfish-web-app PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Servlet 3.0//EN" "http://glassfish.org/dtds/glassfish-web-app_3_0-1.dtd">
+<glassfish-web-app error-url="">
+  <class-loader delegate="true"/>
+  <jsp-config>
+    <property name="keepgenerated" value="true">
+      <description>Keep a copy of the generated servlet class' java code.</description>
+    </property>
+  </jsp-config>
+  <ejb-ref>
+      <ejb-ref-name>ejb/ReportManager</ejb-ref-name>
+      <jndi-name>corbaname:iiop:127.0.0.1:3700#java:global/EJBOpenTownHall/ReportManager</jndi-name>
+  </ejb-ref>
+  <ejb-ref>
+      <ejb-ref-name>ejb/UserDataManager</ejb-ref-name>
+      <jndi-name>corbaname:iiop:127.0.0.1:3700#java:global/EJBOpenTownHall/UserDataManager</jndi-name>
+  </ejb-ref>
+  <ejb-ref>
+      <ejb-ref-name>ejb/WorkerManager</ejb-ref-name>
+      <jndi-name>corbaname:iiop:127.0.0.1:3700#java:global/EJBOpenTownHall/WorkerManager</jndi-name>
+  </ejb-ref>
+  <ejb-ref>
+      <ejb-ref-name>ejb/Watchlist</ejb-ref-name>
+      <jndi-name>corbaname:iiop:127.0.0.1:3700#java:global/EJBOpenTownHall/Watchlist</jndi-name>
+  </ejb-ref>
+</glassfish-web-app>

@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>OpenTownHall</title>
+        <link href="resources/bootstrap/css/bootstrap.min.css" rel="stylesheet"></link>
+        <script src="resources/bootstrap/js/jquery-1.11.1.min.js"></script>
+        <script src="resources/bootstrap/js/bootstrap.min.js"></script>
+    </h:head>
+    <h:body>
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#{reportsView.goHome()}">
+                        <img alt="Brand" src="resources/images/town-hall.png" style="float: left; max-height: 100%;max-width: 100%"></img>
+                        <strong style="color: #33485d">OpenTownHall</strong>
+                    </a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <h:form>
+                        <ul class="nav navbar-nav">  
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="#{reportView.goNewReport()}" value="&nbsp;New Report" rendered="#{loginView.user.role eq 'user'}">
+                                    <span class="glyphicon glyphicon-plus" style="float: left"></span>
+                                </h:commandLink>        
+                            </li>
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="#{reportsView.goHome()}" value="&nbsp;My Reports" rendered="#{loginView.user.role eq 'user'}">
+                                    <span class="glyphicon glyphicon-list-alt" style="float: left"></span>
+                                    <f:param name="uId" value="#{loginView.user.id}"/>
+                                    <f:param name="uName" value="#{loginView.user.name} #{loginView.user.surname}"/>
+                                </h:commandLink>        
+                            </li>
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="watchlist.xhtml" value="&nbsp;Watchlist" rendered="#{loginView.user.role eq 'user'}">
+                                    <span class="glyphicon glyphicon-eye-open" style="float: left"></span>
+                                </h:commandLink>        
+                            </li>
+                        </ul>                   
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="profile.xhtml?faces-redirect=true" value=" Profile" >
+                                    <span class="glyphicon glyphicon-user"></span>
+                                    <f:param name="uId" value="#{loginView.user.id}"/>
+                                </h:commandLink>        
+                            </li>
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="#{loginView.doLogout()}" value="Logout" />
+                            </li>
+                        </ul>
+                    </h:form>
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </nav>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3"></div>    
+                <div class="col-md-6">
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-3"><span class="label label-primary">Name</span></div>
+                        <div class="col-md-6"><p>#{loginView.user.name}</p></div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2"></div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-3"><span class="label label-primary">Surname</span></div>
+                        <div class="col-md-6"><p>#{loginView.user.surname}</p></div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2"></div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-3"><span class="label label-primary">Email</span></div>
+                        <div class="col-md-6"><p>#{loginView.user.email}</p></div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2"></div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-3"><span class="label label-primary">Password</span></div>
+                        <div class="col-md-6"><p>******</p></div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2"></div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-3"><span class="label label-primary">Birthdate</span></div>
+                        <div class="col-md-6"><p><h:outputText value="#{loginView.user.birthdate}">
+                                    <f:convertDateTime pattern="dd-MM-yyyy" />
+                                </h:outputText></p></div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2"></div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-3"><span class="label label-primary">Address</span></div>
+                        <div class="col-md-6"><p>#{loginView.user.address}</p></div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2"></div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-3"><span class="label label-primary">Phone Number</span></div>
+                        <div class="col-md-6"><p>#{loginView.user.phone}</p></div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2"></div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-3"><span class="label label-primary">Fiscal Code</span></div>
+                        <div class="col-md-6"><p>#{loginView.user.fiscalCode}</p></div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2"></div>
+                    </div>
+                    <div class="row" style="margin-top: 15px">
+                        <div class="col-md-5"></div>
+                        <div class="col-md-4"></div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2"></div>
+                    </div>
+                    <hr/>
+                </div>
+            </div>
+        </div>
+    </h:body>
+</html>

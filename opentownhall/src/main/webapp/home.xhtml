@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>OpenTownHall</title>
+        <link href="resources/bootstrap/css/bootstrap.min.css" rel="stylesheet"></link>
+        <script src="resources/bootstrap/js/jquery-1.11.1.min.js"></script>
+        <script src="resources/bootstrap/js/bootstrap.min.js"></script>
+        <link href="resources/css/comment.css" rel="stylesheet"></link>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDj0mWyG4yEHi06F4FxG8pKdPUkkvtpHwc"></script>
+        <script type="text/javascript">
+            function initialize() {
+                var mapOptions = {
+                    center: { lat: 46.045681, lng: 11.142328},
+                            zoom: 11
+                };
+
+                var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+                
+                var coordinates = [];
+                coordinates = #{reportsView.list};
+                var marker;
+                $.each(coordinates, function (index, value){
+                   marker = new google.maps.Marker({
+                       position: new google.maps.LatLng(value.split(", ")[0], value.split(", ")[1])
+                   });
+                   
+                    google.maps.event.addListener(marker, 'click', function() {
+                        map.setZoom(17);
+                        map.panTo(this.getPosition());
+                    });  
+                   
+                   marker.setMap(map);
+                });
+            }
+            google.maps.event.addDomListener(window, 'load', initialize);
+
+        </script>
+    </h:head>
+    <h:body>
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#{reportsView.goHome()}">
+                        <img alt="Brand" src="resources/images/town-hall.png" style="float: left; max-height: 100%;max-width: 100%"></img>
+                        <strong style="color: #33485d">OpenTownHall</strong>
+                    </a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <h:form>
+                        <ul class="nav navbar-nav">  
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="#{reportView.goNewReport()}" value="&nbsp;New Report" >
+                                    <span class="glyphicon glyphicon-plus" style="float: left"></span>
+                                </h:commandLink>        
+                            </li>
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="#{reportsView.goHome()}" value="&nbsp;My Reports" >
+                                    <span class="glyphicon glyphicon-list-alt" style="float: left"></span>
+                                    <f:param name="uId" value="#{loginView.user.id}"/>
+                                    <f:param name="uName" value="#{loginView.user.name} #{loginView.user.surname}"/>
+                                </h:commandLink>        
+                            </li>
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="watchlist.xhtml" value="&nbsp;Watchlist" >
+                                    <span class="glyphicon glyphicon-eye-open" style="float: left"></span>
+                                </h:commandLink>        
+                            </li>
+                        </ul>                   
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="profile.xhtml?faces-redirect=true" value=" Profile" >
+                                    <span class="glyphicon glyphicon-user"></span>
+                                    <f:param name="uId" value="#{loginView.user.id}"/>
+                                </h:commandLink>        
+                            </li>
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="#{loginView.doLogout()}" value="Logout" />
+                            </li>
+                        </ul>
+                    </h:form>
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </nav>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-7">
+                    <h3><strong>#{reportsView.pageTitle} </strong></h3>
+                </div>
+                <h:form>
+                    <div class="col-md-1">
+                        <div class="input-group">
+                            <div style=" margin-bottom: 10px">
+                                <strong style="color: #33485d;">Filter by:</strong>
+                            </div>
+                            <h:selectOneRadio id="radioSearch" value="#{searchView.searchType}" layout="pageDirection" styleClass="radio-inline">
+                                <f:selectItem itemValue="title" itemLabel="Title"/>
+                                <f:selectItem itemValue="city" itemLabel="City"/>
+                            </h:selectOneRadio>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group" style="margin-top: 35px">
+                            <h:inputText class="form-control"  value="#{searchView.searchInput}" />
+                            <span class="input-group-btn">
+                                <h:commandLink action="#{reportsView.goHome()}" class="btn btn-large btn-primary">
+                                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                </h:commandLink>
+                            </span>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-7">
+                    <ui:repeat value="#{reportsView.reports}" var="report">
+                        <div class="bs-callout bs-callout-info" style="padding-top: 3px; padding-bottom: 5px;">
+                            <h:form>                               
+                                <h:commandLink action="#{reportView.goReportPage()}" value="#{report.title}" style="color: #33485d; font-size: 15px; font-weight: bold;">
+                                    <f:param name="reportId" value="#{report.id}"/>
+                                </h:commandLink>
+                            </h:form>
+                            <h:form>
+                                <p style="font-size: 11px; margin-top: -2px; color: #777 ">posted by    
+                                    <h:commandLink action="#{reportsView.goHome()}" value="#{report.user.name} #{report.user.surname}" style="font-size: 11px;">
+                                        <f:param name="uId" value="#{report.user.id}"/>
+                                        <f:param name="uName" value="#{report.user.name} #{report.user.surname}"/>
+                                    </h:commandLink>                                 
+                                    at #{report.timestamp}
+                                </p>
+                            </h:form>
+                            <p>#{report.descriptionShort}</p>
+                            <hr style="margin-top: 7px; margin-bottom: 7px"/>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h:form>
+                                        <h:commandLink style="font-size: 12px; color: #777" class="nav navbar-nav" action="#{watchView.add(report)}" value="&nbsp;Watch!" rendered="#{not watchView.included(report)}">
+                                            <span class="glyphicon glyphicon-star" style="float: left"></span>
+                                        </h:commandLink>  
+                                    </h:form>
+                                    <h:form>
+                                        <h:commandLink style="font-size: 12px; color: #777" class="nav navbar-nav" action="#{watchView.remove(report)}" value="&nbsp;un-Watch!" rendered="#{watchView.included(report)}">
+                                            <span class="glyphicon glyphicon-star" style="float: left; color : #ffd600"></span>
+                                        </h:commandLink>  
+                                    </h:form>
+                                </div>
+                                <div class="col-md-6">
+                                    <h:panelGrid id="grid1" columns="1" style="float:right;" rendered="#{report.status eq -1}">
+                                    <p style="font-size: 11px; color: #777; font-style: italic;"><span class="glyphicon glyphicon-remove-sign" style="color: red"></span> not assigned yet!</p>
+                                    </h:panelGrid>
+                                    <h:panelGrid id="grid2" columns="1" style="float:right;" rendered="#{report.status eq 0}">
+                                    <p style="font-size: 11px; color: #777; font-style: italic;"><span class="glyphicon glyphicon-ok-sign"></span> assigned to #{report.worker.name} #{report.worker.surname}</p>
+                                    </h:panelGrid>
+                                    <h:panelGrid id="grid3" columns="1" style="float:right;" rendered="#{report.status eq 1}">
+                                    <p style="font-size: 11px; color: #777; font-style: italic;"><span class="glyphicon glyphicon-ok-sign" style="color: green"></span> solved by #{report.worker.name} #{report.worker.surname}</p>
+                                    </h:panelGrid>
+                                </div>
+                            </div>
+                        </div>
+                        <hr style="margin-top: 7px; margin-bottom: 7px"/>
+                    </ui:repeat>
+                </div>
+                <div class="col-md-5">
+                    <div class="panel panel-default" style="padding: 5px;">
+                        <div id="map-canvas" style="width:445px; height:445px"></div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </h:body>
+</html>

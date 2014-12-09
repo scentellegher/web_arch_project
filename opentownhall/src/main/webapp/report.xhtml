@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <title>OpenTownHall</title>
+        <link href="resources/bootstrap/css/bootstrap.min.css" rel="stylesheet"></link>
+        <script src="resources/bootstrap/js/jquery-1.11.1.min.js"></script>
+        <script src="resources/bootstrap/js/bootstrap.min.js"></script>
+        <link href="resources/css/comment.css" rel="stylesheet"></link>
+    </h:head>
+    <h:body>
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#{reportsView.goHome()}">
+                        <img alt="Brand" src="resources/images/town-hall.png" style="float: left; max-height: 100%;max-width: 100%"></img>
+                        <strong style="color: #33485d">OpenTownHall</strong>
+                    </a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <h:form>
+                        <ul class="nav navbar-nav">  
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="#{reportView.goNewReport()}" value="&nbsp;New Report" >
+                                    <span class="glyphicon glyphicon-plus" style="float: left"></span>
+                                </h:commandLink>        
+                            </li>
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="#{reportsView.goHome()}" value="&nbsp;My Reports" >
+                                    <span class="glyphicon glyphicon-list-alt" style="float: left"></span>
+                                    <f:param name="uId" value="#{loginView.user.id}"/>
+                                    <f:param name="uName" value="#{loginView.user.name} #{loginView.user.surname}"/>
+                                </h:commandLink>        
+                            </li>
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="watchlist.xhtml" value="&nbsp;Watchlist">
+                                    <span class="glyphicon glyphicon-eye-open" style="float: left"></span>
+                                </h:commandLink>        
+                            </li>
+                        </ul>                   
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="profile.xhtml?faces-redirect=true" value=" Profile" >
+                                    <span class="glyphicon glyphicon-user"></span>
+                                    <f:param name="uId" value="#{loginView.user.id}"/>
+                                </h:commandLink>        
+                            </li>
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="#{loginView.doLogout()}" value="Logout" />
+                            </li>
+                        </ul>
+                    </h:form>
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </nav>
+        <div class="container">
+            <div class="row">
+               <div class="col-md-3"></div>
+                <div class="col-md-6">
+                    <hr/>
+                    <h:outputText style="font-size: xx-large" value="New Report" rendered="#{reportView.edit eq false}"/>
+                    <h:outputText style="font-size: xx-large" value="Edit Report" rendered="#{reportView.edit}"/>
+                    <h:form enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="phone">Title</label>
+                            <h:inputText id="title" value="#{reportView.title}" class="form-control" pt:placeholder="Title" required="true" requiredMessage="Title Required" />                           
+                            <h:message for="title" style="color:red;float: right;"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <h:inputTextarea id="description" value="#{reportView.description}" rows="10" class="form-control" pt:placeholder="Add a description..." required="true" requiredMessage="Description Required"/>
+                            <h:message for="description" style="color:red;float: right;"/>
+                        </div>
+                        <div class="form-group">
+                            <h:outputText style="font-weight: bold;" value="Want to add a Picture?" rendered="#{ (reportView.currentReport.pictureCollection.size() eq 0) or (reportView.edit eq false) or (reportView.edit eq null)}"/>
+                            <h:inputFile id="file" value="#{inputBean.part}" rendered="#{ (reportView.currentReport.pictureCollection.size() eq 0) or (reportView.edit eq false) or (reportView.edit eq null)}">
+                                <f:validator validatorId="FileUploadValidator" />
+                                
+                            </h:inputFile>
+                            <h:message style="color: red" for="file" /><br />
+                            <h:outputText value="#{inputBean.statusMessage}" rendered="#{not empty inputBean.statusMessage}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="city">Address</label>
+                            <h:inputText id="city" value="#{reportView.city}" class="form-control" pt:placeholder="City" required="true" requiredMessage="City Required" />                           
+                            <h:message for="city" style="color:red;float: right;"/>
+                        </div>
+                        <div class="form-group">
+                            <h:inputText id="address" value="#{reportView.address}" class="form-control" pt:placeholder="Address" required="true" requiredMessage="Address Required" />                           
+                            <h:message for="address" style="color:red;float: right;"/>
+                        </div>
+                        <div class="form-group">
+                            <h:inputText id="number" value="#{reportView.streetNumber}" class="form-control" pt:placeholder="Street number" required="true" requiredMessage="Street Number Required" validatorMessage="Invalid Street Number" >
+                                <f:validateRegex pattern="[0-9a-zA-Z/]+"/>
+                            </h:inputText>                           
+                            <h:message for="number" style="color:red;float: right;"/>
+                        </div>
+                        <h:commandButton class="btn btn-large btn-primary" action="#{reportView.addReport()}" value="Add Report" rendered="#{reportView.edit eq false}"></h:commandButton>
+                        <h:commandButton class="btn btn-large btn-primary" action="#{reportView.editReport()}" value="Edit Report" rendered="#{reportView.edit}"></h:commandButton>
+                    </h:form>
+                    <hr/>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+        </div>
+    </h:body>
+</html>
