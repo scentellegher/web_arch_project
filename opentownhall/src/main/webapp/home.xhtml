@@ -61,20 +61,25 @@
                     <h:form>
                         <ul class="nav navbar-nav">  
                             <li>
-                                <h:commandLink class="nav navbar-nav" action="#{reportView.goNewReport()}" value="&nbsp;New Report" >
+                                <h:commandLink class="nav navbar-nav" action="#{reportView.goNewReport()}" value="&nbsp;New Report" rendered="#{loginView.user.role eq 'user'}">
                                     <span class="glyphicon glyphicon-plus" style="float: left"></span>
                                 </h:commandLink>        
                             </li>
                             <li>
-                                <h:commandLink class="nav navbar-nav" action="#{reportsView.goHome()}" value="&nbsp;My Reports" >
+                                <h:commandLink class="nav navbar-nav" action="#{reportsView.goHome()}" value="&nbsp;My Reports" rendered="#{loginView.user.role eq 'user'}">
                                     <span class="glyphicon glyphicon-list-alt" style="float: left"></span>
                                     <f:param name="uId" value="#{loginView.user.id}"/>
                                     <f:param name="uName" value="#{loginView.user.name} #{loginView.user.surname}"/>
                                 </h:commandLink>        
                             </li>
                             <li>
-                                <h:commandLink class="nav navbar-nav" action="watchlist.xhtml" value="&nbsp;Watchlist" >
+                                <h:commandLink class="nav navbar-nav" action="watchlist.xhtml" value="&nbsp;Watchlist" rendered="#{loginView.user.role eq 'user'}">
                                     <span class="glyphicon glyphicon-eye-open" style="float: left"></span>
+                                </h:commandLink>        
+                            </li>
+                            <li>
+                                <h:commandLink class="nav navbar-nav" action="registration.xhtml" value="&nbsp;New Worker" rendered="#{loginView.user.role eq 'admin'}" >
+                                    <span class="glyphicon glyphicon-plus" style="float: left"></span>
                                 </h:commandLink>        
                             </li>
                         </ul>                   
@@ -146,12 +151,12 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <h:form>
-                                        <h:commandLink style="font-size: 12px; color: #777" class="nav navbar-nav" action="#{watchView.add(report)}" value="&nbsp;Watch!" rendered="#{not watchView.included(report)}">
+                                        <h:commandLink style="font-size: 12px; color: #777" class="nav navbar-nav" action="#{watchView.add(report)}" value="&nbsp;Watch!" rendered="#{(loginView.user.role eq 'user') and (not watchView.included(report))}">
                                             <span class="glyphicon glyphicon-star" style="float: left"></span>
                                         </h:commandLink>  
                                     </h:form>
                                     <h:form>
-                                        <h:commandLink style="font-size: 12px; color: #777" class="nav navbar-nav" action="#{watchView.remove(report)}" value="&nbsp;un-Watch!" rendered="#{watchView.included(report)}">
+                                        <h:commandLink style="font-size: 12px; color: #777" class="nav navbar-nav" action="#{watchView.remove(report)}" value="&nbsp;un-Watch!" rendered="#{(loginView.user.role eq 'user') and (watchView.included(report))}">
                                             <span class="glyphicon glyphicon-star" style="float: left; color : #ffd600"></span>
                                         </h:commandLink>  
                                     </h:form>

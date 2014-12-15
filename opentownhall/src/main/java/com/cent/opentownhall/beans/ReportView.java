@@ -131,7 +131,6 @@ public class ReportView implements Serializable{
     public String editReport(){
         //create dto
         ReportDTO report = new ReportDTO();
-        System.out.println("ID REPORT TO EDIT = "+currentReport.getId());
         report.setId(currentReport.getId()); //old value
         report.setTitle(title);        
         report.setDescription(description);
@@ -143,31 +142,40 @@ public class ReportView implements Serializable{
         report.setWorker(currentReport.getWorker()); // old value
         report.setCommentCollection(currentReport.getCommentCollection()); // old value
         report.setPictureCollection(currentReport.getPictureCollection()); // old value
+        System.out.println("pic collection size"+report.getPictureCollection().size());
         String path="";
         try {
             path = inputBean.uploadFile();
         } catch (IOException ex) {
             System.out.println("OOPS");
         }
-       
-        PictureDTO pic = new PictureDTO();
-        pic.setPath(path);
-        //setto l'id e poi lo metto nella picture (sono uguali)
-        report.setId(report.getId());
-        pic.setReportId(report);
-        pic.setUserId(report.getUser());
-        managerRemote.addPicture(pic);
-        
+        System.out.println("path="+path);
+        PictureDTO pic = null;
+        if(path!=null){//se aggiungo l'immagine
+            System.out.println("sono entrato");
+            pic = new PictureDTO();
+            pic.setPath(path);
+            //setto l'id e poi lo metto nella picture (sono uguali)
+            report.setId(report.getId());
+            pic.setReportId(report);
+            pic.setUserId(report.getUser());
+            managerRemote.addPicture(pic);
+        }
         if(managerRemote.editReport(report)){      
             //aggiorno
             currentReport.setTitle(title); 
             currentReport.setDescription(description); 
             currentReport.setAddress(city.trim()+", "+address.trim()+" "+streetNumber);
             currentReport.setCoordinates("46.069744, 11.121386"); //tmp
-            Collection<PictureDTO> list = currentReport.getPictureCollection();
-            list.add(pic);
-            currentReport.setPictureCollection(list);
-            
+            System.out.println("pic="+pic);
+            if(pic!=null){ //se ho un immagine aggiunta allora aggiorno
+                System.out.println("entro aggiorno pic");
+                Collection<PictureDTO> list = currentReport.getPictureCollection();
+                list.add(pic);
+                System.out.println("pic.path="+pic.getPath());
+                currentReport.setPictureCollection(list);
+            }
+            System.out.println("SIZE="+currentReport.getPictureCollection().size());
             return "view_report.xhtml?faces-redirect=true";
         } else {
             return "home.xhtml?faces-redirect=true";
@@ -192,7 +200,9 @@ public class ReportView implements Serializable{
         comment.setTimestamp(new Date());
         comment.setUserId(loginView.getUser());
         comment.setReportId(currentReport);
-        managerRemote.addComment(comment);
+        int commId = managerRemote.addComment(comment);
+        System.out.println("COMM ID="+commId);
+        comment.setId(commId);
         commentText = "";
         //aggiorno la lista
         Collection<CommentDTO> list = currentReport.getCommentCollection();

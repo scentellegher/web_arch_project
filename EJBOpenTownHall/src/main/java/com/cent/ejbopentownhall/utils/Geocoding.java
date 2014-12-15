@@ -19,7 +19,7 @@ import org.json.JSONObject;
 public class Geocoding {
     
     private static final String GoogleGeocodingBaseUrl = "https://maps.googleapis.com/maps/api/geocode/json";
-    private static final String GoogleKey = "<mykey>";
+    private static final String GoogleKey = "<my-api-key>";
     
     public String findCoordinates(String address){
         

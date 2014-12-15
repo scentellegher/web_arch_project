@@ -93,14 +93,15 @@ public class ReportManager implements ReportManagerRemote {
     }
 
     @Override
-    public boolean addComment(CommentDTO comment) {
+    public Integer addComment(CommentDTO comment) {
+        Integer res = -1;
         CommentDAO dao = new CommentDAO(context.getUserTransaction(), em.getEntityManagerFactory());
         try {
-            dao.create(PresentationToEntity.convertCommentDTO(comment));
+            res = dao.create(PresentationToEntity.convertCommentDTO(comment));
         } catch (Exception ex) {
-            return false;
+            return -1;
         }
-        return true;
+        return res;
     }
 
     @Override

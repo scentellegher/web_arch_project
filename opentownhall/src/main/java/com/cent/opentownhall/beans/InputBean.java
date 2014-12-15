@@ -24,37 +24,39 @@ public class InputBean implements Serializable {
 	public String uploadFile() throws IOException {
 
 		// Extract file name from content-disposition header of file part
-		String fileName = getFileName(part);
-                System.out.println("FILENAME="+fileName);
-                if(fileName==null || fileName.equals(""))
-                    return null;
-		String basePath = "/home/cent/NetBeansProjects/opentownhall/src/main/webapp/resources/pics/";
-		File outputFilePath = new File(basePath + fileName);
-		// Copy uploaded file to destination path
-		InputStream inputStream = null;
-		OutputStream outputStream = null;
-		try {
-			inputStream = part.getInputStream();
-			outputStream = new FileOutputStream(outputFilePath);
-
-			int read = 0;
-			final byte[] bytes = new byte[1024];
-			while ((read = inputStream.read(bytes)) != -1) {
-				outputStream.write(bytes, 0, read);
-			}
-
-			statusMessage = "File upload successfull !!";
-		} catch (IOException e) {
-			e.printStackTrace();
-			statusMessage = "File upload failed !!";
-		} finally {
-			if (outputStream != null) {
-				outputStream.close();
-			}
-			if (inputStream != null) {
-				inputStream.close();
-			}
-		}
+                String fileName = null;
+                if(part!=null){
+                    fileName = getFileName(part);
+                    if(fileName==null || fileName.equals(""))
+                        return null;
+                    String basePath = "/home/cent/NetBeansProjects/opentownhall/src/main/webapp/resources/pics/";
+                    File outputFilePath = new File(basePath + fileName);
+                    // Copy uploaded file to destination path
+                    InputStream inputStream = null;
+                    OutputStream outputStream = null;
+                    try {
+                        inputStream = part.getInputStream();
+                        outputStream = new FileOutputStream(outputFilePath);
+                        
+                        int read = 0;
+                        final byte[] bytes = new byte[1024];
+                        while ((read = inputStream.read(bytes)) != -1) {
+                            outputStream.write(bytes, 0, read);
+                        }
+                        
+                        statusMessage = "File upload successfull !!";
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        statusMessage = "File upload failed !!";
+                    } finally {
+                        if (outputStream != null) {
+                            outputStream.close();
+                        }
+                        if (inputStream != null) {
+                            inputStream.close();
+                        }
+                    }
+                }
                 if(fileName==null || fileName.equals("")){
                     return null;    
                 } else {

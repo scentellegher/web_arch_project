@@ -23,7 +23,7 @@ public interface ReportManagerRemote {
     public Integer addReport(ReportDTO report);
     public boolean editReport(ReportDTO report);
     public boolean addPicture(PictureDTO picture);
-    public boolean addComment(CommentDTO comment);
+    public Integer addComment(CommentDTO comment);
     public boolean deleteComment(int id);
     
 }

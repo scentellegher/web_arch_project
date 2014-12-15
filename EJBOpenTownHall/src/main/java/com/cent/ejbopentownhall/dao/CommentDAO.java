@@ -36,7 +36,8 @@ public class CommentDAO implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Comment comment) throws RollbackFailureException, Exception {
+    public Integer create(Comment comment) throws RollbackFailureException, Exception {
+        Integer result=-1; //return -1 if there is an error
         EntityManager em = null;
         try {
             utx.begin();
@@ -52,6 +53,9 @@ public class CommentDAO implements Serializable {
                 comment.setReportId(reportId);
             }
             em.persist(comment);
+            em.flush();
+            result = comment.getId();
+            System.out.println("COMMENT ID="+result);
             if (userId != null) {
                 userId.getCommentCollection().add(comment);
                 userId = em.merge(userId);
@@ -65,6 +69,7 @@ public class CommentDAO implements Serializable {
             try {
                 utx.rollback();
             } catch (Exception re) {
+                result = -1;
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
             throw ex;
@@ -72,6 +77,7 @@ public class CommentDAO implements Serializable {
             if (em != null) {
                 em.close();
             }
+            return result;
         }
     }
 
